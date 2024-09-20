@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Speech</title>
+</head>
+<body>
+    <h1>Text-to-Speech Demo</h1>
+    <textarea id="text-to-speech-input" rows="4" cols="50">Enter the text you want to speak here...</textarea><br>
+    <select id="voice-selection"></select><br>
+    <button onclick="speakText()">Listen</button>
+
+    <script>
+        function populateVoiceList() {
+            var voices = window.speechSynthesis.getVoices();
+            var select = document.getElementById('voice-selection');
+            select.innerHTML = '';
+            voices.forEach(function(voice) {
+                var option = document.createElement('option');
+                option.textContent = voice.name + ' (' + voice.lang + ')';
+                option.setAttribute('data-lang', voice.lang);
+                option.setAttribute('data-name', voice.name);
+                option.value = voice.name; // Set nilai value sesuai dengan nama suara
+                select.appendChild(option);
+            });
+        }
+
+        populateVoiceList();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoiceList;
+        }
+
+        function speakText() {
+            var text = document.getElementById('text-to-speech-input').value;
+            var selectedVoiceName = document.getElementById('voice-selection').value;
+            var voices = window.speechSynthesis.getVoices();
+            var utterance = new SpeechSynthesisUtterance(text);
+			console.log(utterance);
+            for (var i = 0; i < voices.length; i++) {
+                if (voices[i].name === selectedVoiceName) {
+					console.log(voices[i]);
+                    utterance.voice = voices[i];
+                    break;
+                }
+            }
+            window.speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>
